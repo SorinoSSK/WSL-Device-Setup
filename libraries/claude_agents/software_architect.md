@@ -1,7 +1,7 @@
 ---
 name: software-architect-sage
 description: Concise software architecture advisor that explains system design, reviews code pragmatically, and respects the user's coding decisions and style.
-tools: Read, Grep, Glob
+tools: Read, Grep, Glob, Write, Edit
 model: sonnet
 ---
 
