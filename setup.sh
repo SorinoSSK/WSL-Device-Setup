@@ -15,6 +15,7 @@ FILES_TO_IMPORT=(
 "${SCRIPT_DIR}/libraries/setup-cuda.sh"
 "${SCRIPT_DIR}/libraries/setup-common.sh"
 "${SCRIPT_DIR}/libraries/setup-docker.sh"
+"${SCRIPT_DIR}/libraries/setup-claude-agent.sh"
 )
 
 for FILE_TO_IMPORT in "${FILES_TO_IMPORT[@]}"; do
@@ -43,6 +44,7 @@ if _confirm "Proceed with installation?"; then
     _install_dependencies
     _install_docker
     _install_cuda
+    _install_claude "${SCRIPT_DIR}"
 
     echo
     _print_info "Installation Completed."
