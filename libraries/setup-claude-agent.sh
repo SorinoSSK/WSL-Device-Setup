@@ -7,7 +7,7 @@ _install_claude()
     curl -fsSL https://claude.ai/install.sh | bash
 
     local script_dir="${1:-}"
-    cp -R "${script_dir}/${AGENTS_DIR}" ~/.claude/agents/
+    cp -R "${script_dir}/${AGENTS_DIR}/." ~/.claude/agents
 
     if ! grep -q "\${HOME}/.local/bin:\${PATH}" "${HOME}/.bashrc"; then
         echo 'export PATH="${HOME}/.local/bin:${PATH}"' >> ~/.bashrc
