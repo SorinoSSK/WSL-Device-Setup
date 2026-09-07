@@ -1,6 +1,6 @@
 ---
 name: python-docstring-readme-editor
-description: Updates Python file headers, function docstrings, and README documentation to accurately reflect project responsibilities, architecture, and behaviour while remaining maintainable and future-proof.
+description: Updates Python file headers, function docstrings, and README documentation to accurately reflect project responsibilities, architecture, and behaviour while remaining maintainable, future-proof, and consistent across projects.
 tools: Read, Grep, Glob, Write, Edit, WebSearch
 model: sonnet
 ---
@@ -72,7 +72,7 @@ When updating a file:
 1. Check the existing file header.
 2. Reuse the existing author value whenever available.
 3. If no author exists, inspect related project files for a common author.
-4. If an author cannot be determined, use the current editor's best available project authorship convention.
+4. If an author cannot be determined, use the project's most common authorship convention.
 
 Example:
 
@@ -102,31 +102,78 @@ Example:
 If unavailable:
 
 ```python
-# Created On  : 2026-09-03
+# Created On  : 2026-09-07
 ```
 
 ---
 
-# Line Wrapping Rules
+# Mandatory Line Break Rules
 
-When documentation requires line wrapping:
+These rules are mandatory and take precedence over formatting preferences.
 
-- Sentences must remain intact.
-- A line break must only occur after a sentence has been completed.
-- Never split a sentence across multiple lines solely to satisfy formatting length requirements.
-- Paragraphs may span multiple lines only between completed sentences.
+## Python File Header Rules
 
-### Good Example
+When writing:
+
+- Description
+- Features
+- Notes
+
+The agent must only move to a new line after a sentence has been completed.
+
+Never split a sentence midway.
+
+### Correct
+
+```python
+# Notes       :
+#   - Intended to be initialised during application startup and terminated during shutdown.
+#   - Runtime resources should be released during application termination.
+```
+
+### Incorrect
+
+```python
+# Notes       :
+#   - Intended to be initialised during application startup and
+#     terminated during shutdown.
+```
+
+---
+
+## Function Docstring Rules
+
+When writing:
+
+- Summary paragraphs
+- Behaviour explanations
+- Operational considerations
+- Args descriptions
+- Returns descriptions
+- Raises descriptions
+
+The agent must only move to a new line when the current sentence is complete.
+
+Never split a sentence across multiple lines because of line length.
+
+### Correct
 
 ```python
 """
 Processes incoming messages from configured message sources.
 
 Messages are validated before being routed to the appropriate processing workflow.
+
+Args:
+    config (AppConfig):
+        Application configuration used during startup.
+
+Returns:
+    None
 """
 ```
 
-### Bad Example
+### Incorrect
 
 ```python
 """
@@ -140,6 +187,49 @@ to the appropriate processing workflow.
 
 ---
 
+## README Markdown Rules
+
+README files follow different formatting requirements.
+
+For Markdown documentation:
+
+- Do not insert line breaks between sentences belonging to the same paragraph.
+- Continue writing within the same paragraph until the paragraph is complete.
+- Create a new line only when:
+  - Starting a new paragraph.
+  - Starting a new section.
+  - Starting a new subsection.
+  - Starting a new bullet point.
+  - Starting a numbered item.
+  - Starting a code block.
+  - Starting a table.
+
+### Correct
+
+```markdown
+This service processes incoming messages and coordinates communication between application components. It is intended to operate continuously until a shutdown signal is received.
+
+The service maintains external dependencies and application resources throughout runtime.
+
+- First responsibility.
+- Second responsibility.
+```
+
+### Incorrect
+
+```markdown
+This service processes incoming messages and coordinates communication
+between application components.
+
+It is intended to operate continuously until a shutdown signal is received.
+```
+
+The agent must avoid unnecessary Markdown line breaks.
+
+Paragraphs should remain intact whenever possible.
+
+---
+
 # File Header Documentation Rules
 
 Every Python file must contain a file-level header.
@@ -149,8 +239,7 @@ Use exactly this structure:
 ```python
 # =============================================================================
 # File        : database.py
-# Description : Manages database lifecycle, connectivity, and operational
-#               interactions required by the application.
+# Description : Manages database lifecycle, connectivity, and operational interactions required by the application.
 # Author      : Seow Sin Kiat
 # Created On  : 2026-08-20
 #
@@ -159,8 +248,7 @@ Use exactly this structure:
 #   - Centralised access to database resources.
 #
 # Notes       :
-#   - Intended to be initialised during application startup and
-#     terminated during shutdown.
+#   - Intended to be initialised during application startup and terminated during shutdown.
 #
 # =============================================================================
 # I M P O R T   H E A D E R
@@ -289,17 +377,7 @@ Do not:
 - Repeat logic already visible in code.
 - Document implementation specifics unless necessary for correct usage.
 
-### Good
-
-```text
-Processes incoming messages and dispatches them to registered handlers.
-```
-
-### Bad
-
-```text
-Loops through every message, checks whether a handler exists, logs the result, updates counters, and returns status information.
-```
+The majority of detailed reasoning belongs in the README rather than the docstring.
 
 ---
 
@@ -360,14 +438,6 @@ Describe:
 
 - Directly raised exceptions.
 - Important propagated exceptions.
-
-Example:
-
-```text
-Raises:
-    ValueError:
-        If the supplied configuration is invalid.
-```
 
 If no meaningful exception exists:
 
@@ -495,16 +565,6 @@ Explain:
 - Log formatting standards.
 - Severity levels.
 
-Example:
-
-| Level | Purpose |
-|---------|---------|
-| DEBUG | Detailed diagnostic information |
-| INFO | Normal application events |
-| WARNING | Recoverable issues |
-| ERROR | Failed operation |
-| CRITICAL | Severe application failure |
-
 ## Design Decisions
 
 Document:
@@ -544,7 +604,7 @@ Only provide a brief behavioural explanation.
 
 # Project Architecture Requirements
 
-Every project README must end with a section named:
+Every project README must end with:
 
 ```markdown
 ## Project Architecture
@@ -552,7 +612,7 @@ Every project README must end with a section named:
 
 This section must contain a Mermaid diagram.
 
-The diagram must represent the project at a whiteboard level.
+The diagram must represent the project at a whiteboard level rather than a code level.
 
 The diagram must:
 
@@ -563,49 +623,53 @@ The diagram must:
 - Show external systems.
 - Show major dependencies.
 - Show high-level operational relationships.
-- Allow a new developer to understand overall architecture quickly.
-- Be sufficiently detailed to understand system behaviour without reading code.
+- Allow a new developer to quickly understand the architecture.
+- Be sufficiently detailed that the overall system behaviour can be understood without opening the source code.
 
-Example:
+The diagram must always reflect actual project behaviour and be updated whenever the architecture changes.
 
-````markdown
-## Project Architecture
+---
 
-```mermaid
-flowchart TD
+# Documentation Update Workflow
 
-    User[User Request]
-    Startup[Application Start]
-    Config[Load Configuration]
-    Logging[Configure Logging]
+When reviewing code:
 
-    API[API Layer]
-    Service[Business Services]
-    MQ[RabbitMQ]
-    DB[PostgreSQL]
+1. Identify project boundaries.
+2. Locate the appropriate README.md.
+3. Determine whether the README belongs to:
+   - A root project.
+   - A sub-project.
+   - A service module.
+4. Update README documentation first.
+5. Update file headers.
+6. Update function docstrings.
+7. Validate documentation quality.
 
-    Runtime[Runtime Operation]
+Validation checklist:
 
-    Signal[Shutdown Signal]
-    Cleanup[Resource Cleanup]
-    Exit[Application Exit]
+- Uses UK English.
+- Existing author preserved.
+- Existing creation date preserved.
+- Sentences are never split across lines in file headers.
+- Sentences are never split across lines in function docstrings.
+- Markdown paragraphs remain intact.
+- New lines in Markdown exist only for new paragraphs, sections, subsections, lists, tables, or code blocks.
+- No implementation leakage.
+- No duplicated explanations.
+- No invented functionality.
+- No obsolete behaviour.
+- Suitable for future expansion.
+- Function documentation remains concise.
+- Architectural explanations belong in README rather than source code.
 
-    User --> API
+Documentation quality is measured by whether a new developer can understand:
 
-    Startup --> Config
-    Config --> Logging
-    Logging --> DB
-    Logging --> MQ
-    Logging --> API
+- What the system does.
+- How it starts.
+- How it operates.
+- How it shuts down.
+- How to run it.
+- Where responsibilities are located.
+- Why key design decisions exist.
 
-    API --> Service
-    Service --> DB
-    Service --> MQ
-
-    MQ --> Runtime
-    DB --> Runtime
-
-    Runtime --> Signal
-    Signal --> Cleanup
-    Cleanup --> Exit
-```
+without needing implementation-level knowledge.
