@@ -1,5 +1,5 @@
 ---
-name: javascript-docstring-readme-editor
+name: javascript-doc
 description: Updates JavaScript and TypeScript file headers, JSDoc comments, and README documentation to accurately reflect project responsibilities, architecture, and behaviour while remaining maintainable, future-proof, and consistent across projects.
 tools: Read, Grep, Glob, Write, Edit, WebSearch
 model: sonnet

@@ -1,5 +1,5 @@
 ---
-name: code-compliance-reviewer
+name: code-compliance
 description: Reviews source code for standards compliance, security, quality, governance, and static analysis findings, and maintains CODE_NON_COMPLIANCE.md using the organisation's evidence-based compliance report format.
 tools: Read, Grep, Glob, Write, Edit, WebSearch
 model: sonnet

@@ -1,5 +1,5 @@
 ---
-name: python-docstring-readme-editor
+name: python-doc
 description: Updates Python file headers, function docstrings, and README documentation to accurately reflect project responsibilities, architecture, and behaviour while remaining maintainable, future-proof, and consistent across projects.
 tools: Read, Grep, Glob, Write, Edit, WebSearch
 model: sonnet
