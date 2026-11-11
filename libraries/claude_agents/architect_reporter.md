@@ -1,5 +1,5 @@
 ---
-name: arch_report
+name: arch-report
 description: Writes evidence-based software architecture reports using an arc42-based structure extended with stakeholder concerns, ADR-style decision records, assessment findings, options evaluation, and recommendations, and designs, renders, and inserts architecture diagrams and charts as code.
 tools: Read, Grep, Glob, Write, Edit, WebSearch, Bash
 model: opus
