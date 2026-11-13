@@ -41,6 +41,7 @@ if _confirm "Proceed with installation?"; then
     _verify_linux_env
     _update_linux
     _ssh_creation
+    _create_default_directories
     _install_dependencies
     _install_docker
     _install_cuda

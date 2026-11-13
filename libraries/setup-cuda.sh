@@ -63,6 +63,29 @@ _install_cuda()
         _print_error "CUDA installation aborted, unknown system environment."
     fi
 
+    # # Selecting CUDA version
+    local cuda_ver="" glibc_ver ver
+    if ! ${abort_installation}; then
+        _print_info "Selecting CUDA version..."
+        glibc_ver=$(getconf GNU_LIBC_VERSION | awk '{print $2}')
+        for ver in "${CUDA_VER_LST[@]}"; do
+            # Skip CUDA versions below 13.2 when glibc is 2.42 or later.
+            if dpkg --compare-versions "${glibc_ver}" ge "2.42" && dpkg --compare-versions "${ver}" lt "13.2"; then
+                _print_note "CUDA ${ver} is not compatible with glibc ${glibc_ver}, skipping."
+                continue
+            fi
+            cuda_ver="${ver}"
+            break
+        done
+
+        if [ -z "${cuda_ver}" ]; then
+            abort_installation=true
+            _print_error "No CUDA version in the list is compatible with glibc ${glibc_ver}, CUDA installation aborted."
+        else
+            _print_info "CUDA ${cuda_ver} selected for glibc ${glibc_ver}."
+        fi
+    fi
+
     if ! ${abort_installation}; then
         _print_info "Inserting CUDA repository..."
         
@@ -73,7 +96,7 @@ _install_cuda()
         sudo apt update
         
         _print_info "Installing CUDA Toolkit..."
-        if sudo apt-get install -y "cuda-toolkit-${CUDA_VER}"; then
+        if sudo apt-get install -y "cuda-toolkit-${cuda_ver}"; then
             _print_info "CUDA Toolkit installed successfully."
             if ! grep -q "/usr/local/cuda/bin" "${HOME}/.bashrc"; then
                 cat >> "${HOME}/.bashrc" <<'EOF'
@@ -82,12 +105,13 @@ export PATH=/usr/local/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 EOF
-                export PATH=/usr/local/cuda/bin:$PATH
-                export LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH:-}"
                 _print_info "CUDA path has been added into bashrc."
             else
                 _print_note "CUDA path exist in bashrc, skipping adding of path."
             fi
+            # Apply CUDA paths to the current session for the verification steps.
+            export PATH=/usr/local/cuda/bin:$PATH
+            export LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH:-}"
             is_cuda_success=true
         else
             _print_error "Failed to install CUDA Toolkit."
